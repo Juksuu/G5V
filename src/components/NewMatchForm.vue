@@ -37,7 +37,6 @@
             </v-btn>
           </v-col>
         </v-window-item>
-
         <v-window-item :value="2">
           <v-col cols="12">
             <v-select
@@ -215,7 +214,28 @@
               </v-col>
             </v-row>
             <v-row class="justify-center">
+              <v-col
+                v-bind:key="index"
+                cols="2"
+                v-for="(_, index) in Array.from({
+                  length: newMatchData.maps_to_win
+                })"
+              >
+                <v-select
+                  v-if="
+                    newMatchData.skip_veto &&
+                      newMatchData.maps_to_win >= index + 1
+                  "
+                  v-model="newMatchData.map_sides[index]"
+                  :items="map_side_options"
+                  :label="$t('Veto.MapHeader') + ' ' + (index + 1)"
+                  ref="skipveto"
+                />
+              </v-col>
+            </v-row>
+            <v-row class="justify-center">
               <v-radio-group
+                v-if="!newMatchData.skip_veto"
                 v-model="newMatchData.side_type"
                 row
                 class="justify-center"
@@ -321,6 +341,7 @@ export default {
     selectedSeasonObject: {},
     newServer: {},
     selectedSeason: -1,
+    map_side_options: ["team1_ct", "team2_ct", "knife"],
     newMatchData: {
       min_players_to_ready: 5,
       min_spectators_to_ready: 0,
@@ -331,7 +352,8 @@ export default {
       cvars: [],
       veto_first: "team1",
       spectators: [],
-      side_type: "standard"
+      side_type: null,
+      map_sides: []
     },
     selectedTeams: [],
     newDialog: false,
@@ -377,7 +399,7 @@ export default {
               ? 0
               : parseInt(seasonCvars.min_spectators_to_ready);
           this.newMatchData.side_type =
-            seasonCvars.side_type == null ? "standard" : seasonCvars.side_type;
+            seasonCvars.side_type == null ? null : seasonCvars.side_type;
           this.newMatchData.players_per_team =
             seasonCvars.players_per_team == null
               ? 5
@@ -394,6 +416,10 @@ export default {
             seasonCvars.map_pool.length < 1
               ? []
               : seasonCvars.map_pool.trim().split(" ");
+          this.newMatchData.map_sides =
+            seasonCvars.map_sides.length < 1
+              ? []
+              : seasonCvars.map_sides.trim().split(" ");
           this.newMatchData.spectators =
             seasonCvars.spectators.length < 1
               ? null
@@ -405,6 +431,7 @@ export default {
           delete seasonCvars.maps_to_win;
           delete seasonCvars.skip_veto;
           delete seasonCvars.map_pool;
+          delete seasonCvars.map_sides;
           delete seasonCvars.side_type;
           delete seasonCvars.spectators;
           // Now set Match CVARs. These will be converted back on submit.
@@ -489,6 +516,7 @@ export default {
               .replace("T", " "),
             max_maps: this.newMatchData.maps_to_win,
             side_type: this.newMatchData.side_type,
+            map_sides: this.newMatchData.map_sides.join(" "),
             veto_mappool: this.newMatchData.map_pool.join(" "),
             match_cvars: newCvar,
             veto_first: this.newMatchData.veto_first,

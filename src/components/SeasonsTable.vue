@@ -296,7 +296,28 @@
                   </v-col>
                 </v-row>
                 <v-row class="justify-center">
+                  <v-col
+                    v-bind:key="index"
+                    cols="2"
+                    v-for="(_, index) in Array.from({
+                      length: seasonDefaults.maps_to_win
+                    })"
+                  >
+                    <v-select
+                      v-if="
+                        seasonDefaults.skip_veto &&
+                          seasonDefaults.maps_to_win >= index + 1
+                      "
+                      v-model="seasonDefaults.map_sides[index]"
+                      :items="map_side_options"
+                      :label="$t('Veto.MapHeader') + ' ' + (index + 1)"
+                      ref="skipveto"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row class="justify-center">
                   <v-radio-group
+                    v-if="!seasonDefaults.skip_veto"
                     v-model="seasonDefaults.side_type"
                     row
                     class="justify-center"
@@ -401,6 +422,7 @@ export default {
         dates: [],
         cvars: []
       },
+      map_side_options: ["team1_ct", "team2_ct", "knife"],
       seasonDefaults: {
         min_players_to_ready: 5,
         min_spectators_to_ready: 0,
@@ -409,7 +431,8 @@ export default {
         skip_veto: false,
         map_pool: [],
         spectators: [],
-        side_type: "standard"
+        side_type: null,
+        map_sides: []
       },
       datemenu: false,
       formTitle: this.$t("Seasons.NewFormTitle"),
@@ -452,7 +475,8 @@ export default {
             skip_veto: false,
             map_pool: [],
             spectators: [],
-            side_type: "standard"
+            side_type: null,
+            map_sides: []
           };
           this.$refs.newSeasonForm.resetValidation();
         });
@@ -540,6 +564,7 @@ export default {
         newCvar.spectators =
           newCvar.spectators != "" ? newCvar.spectators.join(" ") : "";
         newCvar.map_pool = newCvar.map_pool.join(" ");
+        newCvar.map_sides = newCvar.map_sides.join(" ");
         if (this.newSeason.id == null) {
           let serverObj = [
             {
@@ -597,7 +622,8 @@ export default {
             skip_veto: false,
             map_pool: [],
             spectators: [],
-            side_type: "standard"
+            side_type: null,
+            map_sides: []
           };
           this.$refs.newSeasonForm.resetValidation();
         });
@@ -623,12 +649,14 @@ export default {
             obj !== "maps_to_win" &&
             obj !== "skip_veto" &&
             obj !== "map_pool" &&
+            obj !== "map_sides" &&
             obj !== "spectators" &&
             obj !== "side_type"
           )
             tmpArr.push(obj + " " + seasonCvars[obj]);
           else if (
             obj === "map_pool" ||
+            obj === "map_sides" ||
             (obj === "spectators" && seasonCvars[obj] !== "")
           )
             this.seasonDefaults[obj] = seasonCvars[obj].split(" ");
