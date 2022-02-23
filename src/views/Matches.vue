@@ -7,6 +7,7 @@
 <script>
 // @ is an alias to /src
 import MatchesTable from "@/components/MatchesTable";
+import router from "@/router";
 export default {
   name: "Home",
   components: {
@@ -28,6 +29,10 @@ export default {
   },
   async mounted() {
     this.user = await this.IsLoggedIn();
+
+    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+      router.replace({ path: "/" });
+    }
   }
 };
 </script>

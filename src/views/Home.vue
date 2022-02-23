@@ -1,7 +1,7 @@
 <template>
   <v-container class="home" fluid>
-    <MatchCards />
-    <v-row>
+    <MatchCards v-if="user && (user.admin || user.super_admin)" />
+    <v-row v-if="user && (user.admin || user.super_admin)">
       <v-col cols="6">
         <TeamLeaderBoard />
       </v-col>

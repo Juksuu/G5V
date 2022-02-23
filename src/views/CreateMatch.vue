@@ -12,6 +12,7 @@
 
 <script>
 import NewMatchForm from "@/components/NewMatchForm";
+import router from "@/router";
 export default {
   name: "Match",
   components: {
@@ -33,6 +34,10 @@ export default {
   },
   async mounted() {
     this.user = await this.IsLoggedIn();
+
+    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+      router.replace({ path: "/" });
+    }
   }
 };
 </script>

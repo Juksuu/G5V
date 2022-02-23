@@ -47,6 +47,7 @@
 <script>
 // @ is an alias to /src
 import MatchesTable from "@/components/MatchesTable";
+import router from "@/router";
 export default {
   name: "Season",
   components: {
@@ -75,6 +76,11 @@ export default {
   },
   async created() {
     this.user = await this.IsLoggedIn();
+    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+      router.replace({ path: "/" });
+      return;
+    }
+
     this.seasonData = await this.GetSeasonInfo(this.$route.params.id);
     this.seasonData.start_date = new Date(this.seasonData.start_date)
       .toISOString()

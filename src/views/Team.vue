@@ -22,6 +22,7 @@
 // @ is an alias to /src
 import TeamTable from "@/components/TeamTable";
 import MatchTable from "@/components/MatchesTable";
+import router from "@/router";
 export default {
   name: "Teams",
   components: {
@@ -47,6 +48,10 @@ export default {
   async created() {
     this.user = await this.IsLoggedIn();
     if (this.$route.params.id == "create") this.newTeam = true;
+
+    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+      router.replace({ path: "/" });
+    }
   }
 };
 </script>

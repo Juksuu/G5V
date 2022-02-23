@@ -21,6 +21,7 @@
 import PlayerStats from "@/components/PlayerStatTable";
 import MatchInfo from "@/components/MatchInfo";
 import VetoInfo from "@/components/VetoTable";
+import router from "@/router";
 export default {
   name: "Match",
   components: {
@@ -44,6 +45,10 @@ export default {
   },
   async mounted() {
     this.user = await this.IsLoggedIn();
+
+    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+      router.replace({ path: "/" });
+    }
   }
 };
 </script>

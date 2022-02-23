@@ -38,12 +38,16 @@
             <v-list-item-title>{{ $t("Navbar.Home") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item index="Matches" :to="'/matches'">
+          <v-list-item
+            index="Matches"
+            :to="'/matches'"
+            v-if="user && (user.admin || user.super_admin)"
+          >
             <v-list-item-title>{{ $t("Navbar.AllMatches") }}</v-list-item-title>
           </v-list-item>
 
           <v-list-item
-            v-if="user.id != null"
+            v-if="user && (user.admin || user.super_admin)"
             index="mymatches"
             :to="'/mymatches'"
           >
@@ -51,7 +55,7 @@
           </v-list-item>
 
           <v-list-item
-            v-if="user.id != null"
+            v-if="user && (user.admin || user.super_admin)"
             index="match_create"
             :to="'/match/create'"
           >
@@ -60,35 +64,61 @@
             }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="user.id != null" :to="'/myteams'">
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/myteams'"
+          >
             <v-list-item-title>{{ $t("Navbar.MyTeams") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item :to="'/teams'" exact>
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/teams'"
+            exact
+          >
             <v-list-item-title>{{ $t("Navbar.AllTeams") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="user.id != null" :to="'/teams/create'" exact>
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/teams/create'"
+            exact
+          >
             <v-list-item-title>{{ $t("Navbar.CreateTeam") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="user.id != null" :to="'/myservers'">
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/myservers'"
+          >
             <v-list-item-title>{{ $t("Navbar.MyServers") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="user.id != null" @click="newDialog = true">
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            @click="newDialog = true"
+          >
             <v-list-item-title>{{ $t("Navbar.AddServer") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item :to="'/seasons'">
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/seasons'"
+          >
             <v-list-item-title>{{ $t("Navbar.AllSeasons") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item v-if="user.id != null" :to="'/myseasons'">
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/myseasons'"
+          >
             <v-list-item-title>{{ $t("Navbar.MySeasons") }}</v-list-item-title>
           </v-list-item>
 
-          <v-list-item :to="'/leaderboard'">
+          <v-list-item
+            v-if="user && (user.admin || user.super_admin)"
+            :to="'/leaderboard'"
+          >
             <v-list-item-title>
               {{ $t("Navbar.PlayerLeader") }}
             </v-list-item-title>
