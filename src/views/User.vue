@@ -1,24 +1,22 @@
 <template>
   <v-card class="mx-auto">
     <v-container>
-      <v-card-title v-if="retrievedUser.id != 0">
-        {{ retrievedUser.name }}
+      <v-card-title>
+        {{ name }}
         <a
-          :href="
-            `https://steamcommunity.com/profiles/${retrievedUser.steam_id}`
-          "
+          :href="`https://steamcommunity.com/profiles/${steamId}`"
           target="_blank"
         >
           <v-icon>mdi-steam</v-icon>
         </a>
         <v-spacer />
-        <img style="border-radius: 15px;" :src="retrievedUser.medium_image" />
+        <img
+          style="border-radius: 15px;"
+          v-if="retrievedUser.id"
+          :src="retrievedUser.medium_image"
+        />
       </v-card-title>
-      <v-card-title v-else>
-        {{ $t("User.ClaimUser") }}
-        <v-spacer />
-      </v-card-title>
-      <v-card-subtitle>
+      <v-card-subtitle v-if="retrievedUser.id">
         <v-chip
           class="ma-2"
           color="primary"
@@ -72,13 +70,13 @@
       </v-card-title>
       <PlayerStats v-if="userStats != null" :statArray="userStats" />
     </v-container>
-    <v-container>
+    <v-container v-if="retrievedUser.id">
       <v-card-title class="headline">
         {{ $t("User.Past5") }}
       </v-card-title>
-      <MatchesTable v-if="retrievedUser.id != ''" :user="retrievedUser" />
+      <MatchesTable :user="retrievedUser" />
     </v-container>
-    <v-container v-if="retrievedUser.id == user.id || IsAnyAdmin(user)">
+    <v-container v-if="retrievedUser.id == user.id">
       <v-card-title class="headline">
         {{ $t("User.UserMaps", { players: retrievedUser.name }) }}
       </v-card-title>
@@ -122,15 +120,25 @@ export default {
       }, // should be object from JSON response
       userStats: [],
       showAPI: false,
-      apiResetLoading: false
+      apiResetLoading: false,
+      name: "",
+      steamId: ""
     };
   },
   async created() {
     this.user = await this.IsLoggedIn();
     if (this.$route.params.id == undefined) this.retrievedUser = this.user;
     else this.retrievedUser = await this.GetUserData(this.$route.params.id);
-    this.userStats = await this.GetUserPlayerStats(this.retrievedUser.steam_id);
+    const id = this.retrievedUser.id
+      ? this.retrievedUser.steam_id
+      : this.$route.params.id;
+    this.userStats = await this.GetUserPlayerStats(id);
     if (typeof this.userStats == "string") this.userStats = [];
+
+    if (this.userStats.length > 0) {
+      this.name = this.userStats[0].name;
+      this.steamId = this.userStats[0].steam_id;
+    }
   },
   methods: {
     async resetApiKey() {
