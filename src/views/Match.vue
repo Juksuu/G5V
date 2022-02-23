@@ -46,7 +46,7 @@ export default {
   async mounted() {
     this.user = await this.IsLoggedIn();
 
-    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+    if (!this.IsAnyAdmin(this.user)) {
       router.replace({ path: "/" });
     }
   }

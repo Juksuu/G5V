@@ -49,7 +49,7 @@ export default {
     this.user = await this.IsLoggedIn();
     if (this.$route.params.id == "create") this.newTeam = true;
 
-    if (!this.user || (!this.user.admin && !this.user.super_admin)) {
+    if (!this.IsAnyAdmin(this.user)) {
       router.replace({ path: "/" });
     }
   }
