@@ -135,7 +135,10 @@ export default {
     this.userStats = await this.GetUserPlayerStats(id);
     if (typeof this.userStats == "string") this.userStats = [];
 
-    if (this.userStats.length > 0) {
+    if (this.retrievedUser) {
+      this.name = this.retrievedUser.name;
+      this.steamId = this.retrievedUser.steam_id;
+    } else if (this.userStats.length > 0) {
       this.name = this.userStats[0].name;
       this.steamId = this.userStats[0].steam_id;
     }
